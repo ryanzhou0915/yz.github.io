@@ -1,1 +1,66 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Sarah B. Bouchat</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-54929907-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Sarah B. Bouchat</h1>
+        <p>PhD Candidate, Political Science</p>
+        <p>MA, Agricultural & Applied Economics </p>
+        <p> University of Wisconsin–Madison </p>
+
+
+        <p class="view"><a href="https://bouchat.github.io/Research">Research</a></p>
+        
+        <p class="view"><a href="https://bouchat.github.io/Teaching">Teaching</a></p>
+        
+        <p class="view"><a href="https://bouchat.github.io/CV">CV</a></p>
+        
+        <p class="view"><a href="https://github.com/bouchat">View My GitHub Profile</a></p>
+
+      </header>
+      <section>
+        <h3>
+<a name="teaching" class="anchor" href="#teaching"><span class="octicon octicon-link"></span></a>Teaching</h3>
+
+<p> You can find the section syllabus, section handouts, and R script files used for each class I have taught in my <a href="https://github.com/bouchat/">Github repository</a>. 
+
+<p> The dedicated sites for each class are linked below: </p>
+
+<p class="view"><a href="https://bouchat.github.io/812"> 812: Introduction to Statistical Methods for Political Science</a></p>
+        
+<p class="view"><a href="https://bouchat.github.io/818"> 818: Maximum Likelihood Estimation</a></p>
+
+<p class="view"><a href="https://bouchat.github.io/MathCamp"> Political Science Math Camp</a></p>
+
+      </section>
+      <footer>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
 
