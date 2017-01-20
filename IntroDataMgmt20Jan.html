@@ -369,7 +369,7 @@ library(foreign)</code></pre>
 B &lt;- log(100, base=10)
 C &lt;- 15
 D &lt;- (A + B)/C</code></pre>
-<p>Note that in order to store values to objects, we use the <code>&lt;-</code> syntax, which in English roughly means “A gets 1+2.”</p>
+<p>Note that in order to store values to objects, we use the <code>&lt;-</code> syntax, which in English roughly means “A gets 1+2.” There are many operators such as <code>&lt;-</code> that you will use for math, assignment, and selection in R. We will cover most of the important ones as you need them, but if you ever want a sort of “dictionary” to various options, CRAN hosts a great set of documentation on <a href="https://cran.r-project.org/doc/manuals/r-devel/R-lang.html">R Syntax</a>.</p>
 <p>The type of data we enter can differ, however. As Hadley Wickham describes in greater detail in <a href="http://adv-r.had.co.nz/Data-structures.html">Advanced R</a>, we can think about the different data types that R handles in terms of their dimensionality. Single dimension data types will be (atomic) vectors or lists, whereas two-dimensional types will be matrices or dataframes. This generalizes to n dimensions with arrays. Within each of these dimensionalities, data may still be of different types. Data can be numeric, string, factor, etc. Knowing what type of data you are using and how it is organized is critical to using functions and conducting your analysis.</p>
 <p>We can input different types and dimensions of data directly into R.</p>
 <pre class="r"><code>scalar &lt;- 10
