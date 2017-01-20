@@ -470,6 +470,253 @@ ls()</code></pre>
 ## [17] &quot;vector.3&quot;</code></pre>
 <pre class="r"><code># Remove everything in the workspace
 rm(list=ls())</code></pre>
+<p>Sometimes, having entered data in a particular format is not compatible with a function or package we want to use for analysis. This requires first knowing the class of the objects we have entered (the type of data they have and the structure of those data) and then knowing what form we need to transform them into. Transforming types is known as <em>coercion</em>.</p>
+<p>You can check the current type/class of objects in R before transforming them to meet your needs.</p>
+<pre class="r"><code>my.matrix &lt;- matrix(c(1,2,3,4,5,6), nrow=3, ncol=2, byrow=F)
+my.matrix</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    1    4
+## [2,]    2    5
+## [3,]    3    6</code></pre>
+<pre class="r"><code>class(my.matrix)</code></pre>
+<pre><code>## [1] &quot;matrix&quot;</code></pre>
+<pre class="r"><code>new.df&lt;-as.data.frame(my.matrix)
+class(new.df)</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<pre class="r"><code>my.new.matrix &lt;- as.matrix(new.df)
+class(my.new.matrix)</code></pre>
+<pre><code>## [1] &quot;matrix&quot;</code></pre>
+<p>Note here that we are transforming a data structure we have already explored—a matrix—into a dataframe. Dataframes will be the most standard way of storing your data in R. As we did above in constructing matrices, you can use <code>cbind()</code> and <code>rbind()</code> to construct and combine dataframes.</p>
+<p>Data may be of differing types—logical, numeric, integer, double, character—that you may need to transform as well. In general, transformations will take the form <code>as.[type]</code>.</p>
+<pre class="r"><code>logical &lt;- c(TRUE, FALSE, TRUE)
+num &lt;- as.numeric(logical)
+num</code></pre>
+<pre><code>## [1] 1 0 1</code></pre>
+<p>Note that this will be particularly important for altering data structures like date formats and for creating factor variables for regression models in the coming weeks.</p>
+</div>
+</div>
+<div id="data-management-in-r" class="section level1">
+<h1>Data Management in R</h1>
+<div id="loading-external-data" class="section level2">
+<h2>Loading External Data</h2>
+<p>Now that you have seen how R organizes data that you input yourself, you are ready to see how data can be read in to R either from pre-constructed datasets internal to R or from external sources.</p>
+<p>If the dataset is internal to R, in general you will use the format <code>dataset &lt;- data(datasetname)</code>. For example:</p>
+<pre class="r"><code>trees &lt;- data(trees)</code></pre>
+<p>While not suitable for doing your own research projects, the datasets that exist within R can be useful tools for learning new coding techniques. You can see what other datasets exist in R using <code>data()</code>.</p>
+<p>For datasets not within R, however, you will in general use the <code>library(foreign)</code> package to read them in. This package contains functions suitable to several different data formats, including popular ones like csv (where you will need to specify the delimiter and whether there are headers) and Stata .dta files.</p>
+<p>For example, suppose that you have downloaded the latest <a href="http://qog.pol.gu.se/data/datadownloads/qogstandarddata">Quality of Governance dataset</a> as a Stata .dta file. Once you have loaded the <code>foreign</code> package and set your working directory, you can read in these data with <code>read.dta</code>.</p>
+<pre class="r"><code>qog &lt;- read.dta(&quot;qog_std_cs_jan16.dta&quot;)</code></pre>
+<p>If instead you had downloaded the .csv version of these data, you might enter:</p>
+<pre class="r"><code>qog &lt;- read.csv(&quot;qog_std_cs_jan16.dta&quot;, header=T)</code></pre>
+<p>Once you have your data saved to an object, you can move on to editing and cleaning the data. In general you can do this by referencing variables within the data, but some people prefer to <code>attach</code> data to the search path. For example, to work with the “trust” variable from the World Values Survey that is contained within QoG, you could either:</p>
+<pre class="r"><code># Print values for WVS trust variable
+qog$wvs_trust
+
+# or
+
+# Attach the data and reference variables directly
+attach(qog)
+wvs_trust</code></pre>
+<p>Be cautious if you choose to attach data. Attaching can make it challenging to keep track of objects in your workspace, and if you make edits to the data after attaching it, those will not always be reflected in the attached version.</p>
+</div>
+<div id="data-cleaning-merging-and-appending" class="section level2">
+<h2>Data cleaning, merging, and appending</h2>
+<p>Before you edit your data, you should examine it. Two key functions you will likely use will give you a summary of your data by variable, and will give you the variable names in your dataset, respectively.</p>
+<pre class="r"><code>summary(qog)
+names(qog)</code></pre>
+<div id="creating-variables" class="section level3">
+<h3>Creating variables</h3>
+<p>In the same way that using <code>$</code> let us specify an existing variable in the dataset, it can also allow us to create a new variable. In general you will use the syntax</p>
+<pre class="r"><code>dataset$new.variable &lt;- values</code></pre>
+<p>For example, you may want to transform or rescale an existing variable—you do not want to write over the original, but rather want to add a new, rescaled version:</p>
+<pre class="r"><code>qog$wvs_trust_rsc &lt;- qog$wvs_trust/2</code></pre>
+</div>
+<div id="dropping-and-keeping-variables" class="section level3">
+<h3>Dropping and keeping variables</h3>
+<p>You can use similar logic to begin to subset your data to include only variables that are relevant to your research question.</p>
+<pre class="r"><code># Select variables to keep
+selected &lt;- c(&quot;ccode&quot;, &quot;cname&quot;, &quot;ajr_settmort&quot;)
+
+# Subset your data
+qog.subset &lt;- qog[selected]
+
+# Select variables to drop
+dropped &lt;- names(qog) %in% c(&quot;wr_nonautocracy&quot;, &quot;wr_regtype&quot;)
+
+qog.subset.2 &lt;- qog[!dropped]</code></pre>
+<p>Note that you can also subset data using <code>subset()</code>.</p>
+<pre class="r"><code>qog.subset.3 &lt;- subset(qog, wvs_trust==max(wvs_trust, na.rm=T))</code></pre>
+</div>
+<div id="missing-values" class="section level3">
+<h3>Missing values</h3>
+<p>R handles missing values differently than some other programs, including Stata. Missing values will appear as <code>NA</code> (whereas in Stata these will appear as large numeric values). Note, though, that <code>NA</code> is not a string, it is a symbol. If you try to conduct logical tests with NA, you are likely to get errors or <code>NULL</code>.</p>
+<p>You have several options for dealing with <code>NA</code> values.</p>
+<ul>
+<li><code>na.omit()</code> or <code>na.exclude()</code> will row-wise delete missing values in your dataset</li>
+<li><code>na.fail()</code> will keep an object only if no missing values are present</li>
+<li><code>na.action=</code> is a common option in many functions, for example in a linear model where you might write <code>model &lt;- lm(y~x, data = data, na.action = na.omit)</code>.</li>
+<li><code>is.na</code> allows you to logically test for <code>NA</code> values, for example when subsetting</li>
+</ul>
+</div>
+<div id="merging-and-combining-data" class="section level3">
+<h3>Merging and combining data</h3>
+<p>You may want to draw on data from multiple sources or at differing levels of aggregation. To do this, you first must know what your data look like and know what format you ultimately want them to take. Whatever you do, do <em>not</em> attempt to merge datasets by hand—this leads to mistakes and frustration.</p>
+<p>There are two broad categories of combining datasets:</p>
+<ol style="list-style-type: decimal">
+<li>Appending
+<ul>
+<li>Adding new rows or observations</li>
+<li>New data may or may not have the same variables/columns as old data</li>
+</ul></li>
+<li>Merging
+<ul>
+<li>Adding variables/columns</li>
+<li>New variables may match current observations or not (level of aggregation)</li>
+</ul></li>
+</ol>
+<p>We already discussed a simple way to append data in R: use the <code>rbind()</code> command. Note that to do this, data must have the same variables in the same format, or you must do this cleaning prior to using <code>rbind()</code>. In particular, be careful if variables in one dataset are of a <code>date</code> format whereas in another they are a <code>string</code>. The variables do not need to be arranged in the same order across datasets, however.</p>
+<p>Merging requires more attention to how the datasets will be matched using identifier variables. Often these identifier variables are clear based on the structure of the data and your research question, but complications can still arise. For example, if I wanted to merge the QoG dataset with a World Bank dataset and align the two sets of data by country, I might find that one lists North Korea as “North Korea” and another as “Korea, North” or “Korea, Democratic People’s Republic.” These differences can make merging tricky.</p>
+<p>In general, however, you will be able to use the <code>merge()</code> command to combine datasets.</p>
+<pre class="r"><code>new.data &lt;- merge(dataset.1, dataset.2, by=&quot;IDvariable&quot;)
+
+new.data.2 &lt;- merge(dataset.1, dataset.2, by=c(&quot;IDvariable&quot;, &quot;year&quot;))</code></pre>
+<p>These operations default to dropping observations that are not matched in one dataset. Optionally, you can add <code>all=TRUE</code> to keep all of the data, or <code>all.x=TRUE</code> or <code>all.y=TRUE</code> to keep observations only in one of the two datasets.</p>
+<p>To our North Korea example from above, you will be able to match variables with differing names, but if multiple matches exist, each will be given a separate row in the new dataset. Be careful because R’s merging is not idiot-proof: if you provide duplicated identifying variables it will not throw an error, but it will make a mess. You may also run into trouble if your identifying variable is in different formats across datasets (e.g., string and date), or if duplicate observations exist or the identifying variable is not unique.</p>
+</div>
+<div id="reshaping-data" class="section level3">
+<h3>Reshaping data</h3>
+<p>In addressing your research question, an important consideration will be unit-of-analysis. You may have hierarchical data (observations belong in groups or classes, such as cities in states or individuals in households) or panel/longitudinal data (unit of analysis over time, such as financial dividends by year). With hierarchical data, you can choose a unit of analysis that is appropriate to your question. With panel data, you may choose to focus on cross-sectional variation (differences across units) or within-unit variation (differences over time in the same subject). How you want to address your question and at what unit of analysis will impact how you want to structure your data.</p>
+<p>In particular, this will influence whether you want to store your data in wide or long format.</p>
+<ul>
+<li><p>Wide format: each grouping, e.g., in hierchical data, is its own row and within-unit variation is expressed by variables</p></li>
+<li><p>Long format: each individual or person-year is a row, so more aggregated units are multiple rows</p></li>
+</ul>
+<p>Wide format:</p>
+<table>
+<thead>
+<tr class="header">
+<th>idvar</th>
+<th>income2008</th>
+<th>income2009</th>
+<th>income 2010</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>100</td>
+<td>99</td>
+<td>101</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>87</td>
+<td>88</td>
+<td>89</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>94</td>
+<td>110</td>
+<td>80</td>
+</tr>
+</tbody>
+</table>
+<p>Long format:</p>
+<table>
+<thead>
+<tr class="header">
+<th>idvar</th>
+<th>year</th>
+<th>income</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>2008</td>
+<td>100</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>2009</td>
+<td>99</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>2010</td>
+<td>101</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>2008</td>
+<td>87</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>2009</td>
+<td>88</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>2010</td>
+<td>89</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>2008</td>
+<td>94</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>2009</td>
+<td>110</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>2010</td>
+<td>80</td>
+</tr>
+</tbody>
+</table>
+<p>R will allow us to switch between data of these differing formats.</p>
+<pre class="r"><code>long.format &lt;- reshape(wide.format, 
+                 # variable names for level one
+                 varying=c(&quot;income2008&quot;, &quot;income2009&quot;, &quot;income2010&quot;),
+                 # new var name for long data
+                 v.names=&quot;income&quot;,
+                 # name for year in long data
+                 timevar=&quot;year&quot;, 
+                 # possible time values
+                 times=c(2008, 2009, 2010), 
+                 # unit-year observations
+                 new.row.names=1:1000,
+                 # direction to reshape
+                 direction=&quot;long&quot;
+                       )
+
+wide.format &lt;- reshape(long.format,
+                       # time variable
+                       timevar=&quot;year&quot;,
+                       # variables not to change
+                       idvar=&quot;idvar&quot;, 
+                       # unit-year observations
+                       new.row.names=1:1000,
+                       # direction of reshape
+                       direction = &quot;wide&quot;
+                       )</code></pre>
+<p>If this seems cumbersome it’s because it is, but there are some alternatives that are slightly more automated. Check out the <a href="https://www.r-bloggers.com/melt/"><code>melt()</code></a> function for more reshaping fun.</p>
+</div>
+<div id="collapsing-data" class="section level3">
+<h3>Collapsing data</h3>
+<p>Sometimes you will have data that need to be aggregated to conduct a higher-level analysis. Typically this means you are interested in describing effects related to a group-level variable (e.g., do PhD students who go to the best programs land the best jobs?). This may also arise when your data are across different levels of analysis, as in the case where you have precinct-level voter turnout data but county level demographics.</p>
+<p>This kind of “collapsing” of data can be implemented by the <code>doBy</code> package.</p>
+<pre class="r"><code>library(doBy)
+
+# Create a new dataframe that collapses data for the x and y variables to the region level
+collapse &lt;- summaryBy(wdi_inflation + wdi_homicide ~ ht_region, FUN=mean, data=qog, na.rm=T)
+collapse</code></pre>
+</div>
 </div>
 </div>
 
