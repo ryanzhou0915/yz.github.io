@@ -558,7 +558,8 @@ my.function(2,1)</code></pre>
 <p>For example, suppose that you have downloaded the latest <a href="http://qog.pol.gu.se/data/datadownloads/qogstandarddata">Quality of Governance dataset</a> as a Stata .dta file. Once you have loaded the <code>foreign</code> package and set your working directory, you can read in these data with <code>read.dta</code>.</p>
 <pre class="r"><code>qog &lt;- read.dta(&quot;qog_std_cs_jan16.dta&quot;)</code></pre>
 <p>If instead you had downloaded the .csv version of these data, you might enter:</p>
-<pre class="r"><code>qog &lt;- read.csv(&quot;qog_std_cs_jan16.dta&quot;, header=T)</code></pre>
+<pre class="r"><code>qog &lt;- read.csv(&quot;qog_std_cs_jan16.csv&quot;, header=T)</code></pre>
+<p>There are options to support a variety of data formats, but some options provide more support than others. For example, the function <code>read.spss()</code> was created over a decade ago, and has not provided support for format updates as SPSS has evolved. This means you may receive warnings when reading in .sav files created in newer versions of SPSS. Furthermore, SPSS is proprietary software and the functions to read these files rely on what can be gleaned from the open-source sister program, PSPP. Take this as an object lesson in the value of open-source. Note, though, that you are receiving warnings but not errors. Warnings should not interfere with your analysis, but they certainly are annoying. One option to attempt to circumvent this is to re-save your data in <code>.csv</code> format. To do this, you can download PSPP (for free), and use it to open your <code>.sav</code> file. Then follow <a href="https://gist.github.com/snurhussein/008dbe9858b12235f0d5">these instructions</a> to save a new <code>.csv</code> version of your data.</p>
 <p>Once you have your data saved to an object, you can move on to editing and cleaning the data. In general you can do this by referencing variables within the data, but some people prefer to <code>attach</code> data to the search path. For example, to work with the “trust” variable from the World Values Survey that is contained within QoG, you could either:</p>
 <pre class="r"><code># Print values for WVS trust variable
 qog$wvs_trust
@@ -768,6 +769,22 @@ wide.format &lt;- reshape(long.format,
 collapse &lt;- summaryBy(wdi_inflation + wdi_homicide ~ ht_region, FUN=mean, data=qog, na.rm=T)
 collapse</code></pre>
 </div>
+</div>
+<div id="saving-transformed-data" class="section level2">
+<h2>Saving transformed data</h2>
+<p>Once you have transformed your data and edited variables, you may want to save your new dataframe as an external data file that your collaborators or other researchers can use. As with reading in data, for saving out data you will need the <code>foreign</code> package. Similarly, you can choose from a number of different data formats to export to as well.</p>
+<p>Most commonly you will want to save out data as a <code>.csv</code> or a tab-delited text file.</p>
+<pre class="r"><code># Generic exporting uses write.table, specifying the dataframe or object you want to export, the file path you want to export it to (full file path if not in your working directory), and that the file will be tab-delimited
+write.table(new.data, &quot;c:/newdata.txt&quot;, sep=&quot;\t&quot;)
+
+# Write to .csv
+write.csv(new.data, &quot;newdata.csv&quot;)</code></pre>
+<p>You can use similar syntax, however, to write out Stata or SPSS files.</p>
+<pre class="r"><code># Stata file
+write.dta(new.data, &quot;c:/newdata.dta&quot;)
+
+# SPSS
+write.foreign(new.data, &quot;c:/newdata.txt&quot;, &quot;c:/mydata.sps&quot;,   package=&quot;SPSS&quot;)</code></pre>
 </div>
 </div>
 
