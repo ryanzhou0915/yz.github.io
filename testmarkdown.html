@@ -222,26 +222,254 @@ div.tocify {
 
 <div id="introduction-to-r" class="section level1">
 <h1>Introduction to R</h1>
-<p>Welcome to the R segment of PS553. We will spend the next several weeks learning basic coding techniques, data management, and analysis processes in R.</p>
+<p>Welcome to the R segment of PS 553. We will spend the next several weeks learning basic coding techniques, data management, and analysis processes in R.</p>
 <p>There are several programs to choose from when doing statistical analyses in the social sciences, including STATA, SAS, SPSS, and Matlab, but R has several distinct advantages that make it useful to learn. First and foremost, R is free, and is designed specifically for conducting statistical analyses and managing data, unlike more general-purpose programs like Python. The R project is open-source, which allows for contributions from scholars and coders around the world and which makes programming your own routines easier. R is also known for having fantastic graphics that you can use in your own data visualizations.</p>
 <p>These characteristics set R apart from another strong contender in statistical computing: Stata. Stata is more expensive, but has a much less steep learning curve. Its use is more common in fields like economics and sociology, but its routines are more difficult to modify and make your own. In this class, you will learn standard techniques in both R and Stata so that you are fluid in both and can choose for yourself which you find most useful.</p>
-<div id="downloading-r" class="section level2">
-<h2>Downloading R</h2>
+<div id="why-use-r" class="section level2">
+<h2>Why Use R?</h2>
+<p>Besides being free and open-source, R is a great resource for conducting social science research and manipulating data. Having programming abilities in general is a necessary skill for conducting quantitative research, but learning R in particular can be useful for completing coursework, collaborating with other researchers, and creating documented and reproducible research products. The automation of analyses will save you time and energy, and the documentation that R forces you to make aids in the scientific project of reproducible research that can be built on by others. Programming in a clean, efficient way is also the key to conducting precise analyses and correcting mistakes. While R requires some upfront investment in order to learn, the process of learning a programming language by itself can aid in later efforts to learn additional programming skills and techniques. In particular, R is an object-oriented programming language, and relies on this architecture much more than other statistical programs. This makes R similar to very commonly used programming languages like C++, Java, Ruby, and Python and will enable you to transition your skills later if your methodological interests develop. Much like learning French is more of an investment than staying with English, its similarities with Spanish or Italian may mean that your investment pays additional dividends down the road. [For the nerds among you, object-oriented programming as a (newer, younger) paradigm could be contrasted with the procedural programming emblematic of C and Fortran.]</p>
+<p>For your purposes in graduate school and in conducting research, R is going to help you manipulate, analyze, and visualize data. All of these are key components of quantitative research and engaging with scholarship in the social sciences. This course emphasizes learning both R and Stata both because personal preferences differ and because some projects may be easier to conduct with one versus the other. For example, time series methods are more routine and packaged in Stata than they are in R, but more complicated, modular modeling structures are easier to construct in R than they are in Stata.</p>
+</div>
+<div id="downloading-r-and-getting-started" class="section level2">
+<h2>Downloading R and Getting Started</h2>
+<p>In order to get started, you first have to <a href="https://www.r-project.org/">download R</a>. To do this, you will need to select a “mirror” on CRAN—feel free to pick any one you like, but it typically makes sense to pick one in your same country or one close to you. This is just the online “location” from which you will download R. R is supported on Windows, Mac, and Linux. With this base download, you will be able to open an R “console” into which you can type commands.</p>
+<p>Once you have R downloaded, you may also choose to download the popular R IDE (integrated development environment), <a href="https://www.rstudio.com/">RStudio</a>. This program will allow you to have the console, your script file (more on this later), and help panes within the same interface. It also helpfully includes some menus and buttons if you prefer to have a gentler introduction to using statistical software for the first time, particularly if you are coming to R from a program like SPSS. Even for more advanced users, RStudio can be useful in giving you a platform for using knitr, rmarkdown, and shiny.</p>
+<p>R’s base functionality is decent, but for your own research you will need to use “packages” that are developed by fellow users. These are also (usually) on CRAN. Later we will talk about how to identify which packages you need and how to load them.</p>
+</div>
+<div id="resources" class="section level2">
+<h2>Resources</h2>
+<p>The internet is truly your best friend as you start to learn R and troubleshoot issues with your code. While there are great resources built in to R to give you help with particular functions or packages, the open-source nature of R means that a large online community exists to address your questions as well. As you are learning, these are some resources you may want to consult:</p>
+<ul>
+<li><a href="http://www.ats.ucla.edu/stat/r/sk/">UCLA IDRE R Starter Kit</a></li>
+<li><a href="https://www.r-bloggers.com/">R Bloggers</a></li>
+<li><a href="https://stackoverflow.com/">Stack Overflow</a></li>
+</ul>
 </div>
 </div>
 <div id="r-script-files" class="section level1">
 <h1>R Script Files</h1>
+<p>Because your code is so critical to allowing other researchers to replicate your analysis, creating a document that records your code is key. While you can simply type commands into the R console and run your analyses that way, that method means you will not have a record of your work. A “script file” in R will allow you to document the steps you took to conduct your analyses. A script file is effectively just a plain text document containing your code. To create these files, you can use the script file interface built into R or RStudio, or you can use an external text editor, which sometimes have nicer features and syntax highlighting. You do <em>not</em> need to pay for a text editing program in order to get great features. Some free options I recommend (in no particular order) are Textmate, Notepad++, and Sublime Text. You can also use very powerful but more complex environments like Emacs (with Emacs Speaks Statistics, ESS) or Vim. All of these programs have functionality that make them work well with your R console, but you do not need anything fancy. You can simply use a built-in notepad program if you prefer.</p>
+<p>As you create your script files, here are a few guidelines to follow:</p>
+<ol style="list-style-type: decimal">
+<li>Plan ahead
+<ul>
+<li>Outline your project</li>
+<li>Write pseudocode</li>
+<li>Search online for prior work</li>
+<li>Use code you wrote already</li>
+</ul></li>
+<li><p>Identify tools/packages you need</p></li>
+<li><p>Make code <em>modular</em></p></li>
+<li><p>Comment your code</p></li>
+<li><p>Save your work!</p></li>
+</ol>
+<p>Procedurally, your R script file will typically contain the following elements:</p>
+<ul>
+<li>Title, author, date</li>
+<li>Working directory</li>
+<li>Packages</li>
+<li>Data inputs</li>
+<li>Analysis</li>
+<li>Outputs (graphics, figures, tables)</li>
+</ul>
 <div id="commenting-your-code" class="section level2">
 <h2>Commenting your code</h2>
+<p>Commenting your code is what will allow future you and future researchers to know how and why you did what you did.</p>
+<p>In R, you can write comments directly into your script file using <code>#</code>. With syntax highlighting enabled, you will be able to easily see comments relating to particular blocks of code. Lines that begin with <code>#</code> will not be executed by the program.</p>
+<pre class="r"><code># I am using R as a calculator.
+2+2</code></pre>
+<pre><code>## [1] 4</code></pre>
+<p>You do not need to comment every line of code you write, but commenting can provide an explanation for <em>why</em> you are doing what you are doing. As a general rule, when you comment your code you should describe what you are doing, but in a way that extends beyond what is already obvious from the code itself. For example:</p>
+<pre class="r"><code># Calculating 2+2
+2+2</code></pre>
+<pre><code>## [1] 4</code></pre>
+<pre class="r"><code># Calculating how many cookies I will eat today, morning and night
+2+2</code></pre>
+<pre><code>## [1] 4</code></pre>
+<p>Commenting can also be used to “toggle” versions of code that you are working on. For example, if you are testing different ways of graphing your data, you might write more than one version of the code, and while you settle on one version for one paper or assignment, you may want to keep the other versions you wrote for later use as well.</p>
+<p>Even more fundamentally, you can use commenting to provide basic information as you begin a new script file.</p>
+<pre class="r"><code># Script file to do my final project
+# Author: Me
+# Date: Today</code></pre>
 </div>
 <div id="pseudocode" class="section level2">
 <h2>Pseudocode</h2>
-<pre class="r"><code>library(ggplot2)
-library(dplyr)
+<p>As you learn R, a useful way to approach writing your own code is to start with “pseudocode.” Pseudocode uses regular language and the syntax or structure of a programming language to help you think about and outline the steps you need to undertake your analysis. You might use commands or function names from R but may not bother with symbols, like { or [ or , .</p>
+<p>As you write pseudocode, discipline yourself to be consistent in the words or patterns you use. Much like learning a foreign language, at first you will write down what you want to say in “English,” then translate each word or line to be in the target language. Eventually you will feel comfortable enough to write directly in the syntax used by R. For example, you might write:</p>
+<pre class="r"><code>Start function
+Input information
+Logical test: if TRUE
+  (what to do if TRUE)
+else
+  (what to do if FALSE)
+End function</code></pre>
+</div>
+<div id="saving-your-work" class="section level2">
+<h2>Saving your Work</h2>
+<p>When conducting research, keeping all of your code, data, and files in the same place is useful. Many journals now require that you make, e.g., your data and code publicly available. Now is the time to invest in file structures and versioning programs (e.g., Dropbox and Github).</p>
+<p>Not only should you save your script file often to prevent loss of your work, you may also want to save your workspace in R in order to save time. If you do this, you will be able to load your console in the future as though you had already completed all of the operations that you ran from your script file. You can do this in the File menu in both R console and RStudio, or use <code>save.image()</code>. While in general this is not necessary, it can save you a lot of time if you did particularly tedious simulations or large-scale data analyses.</p>
+<pre class="r"><code># Save an .RData file of your workspace
+save.image()
 
-smaller &lt;- diamonds %&gt;%
-  filter(carat &lt;= 2.5)</code></pre>
-<p>We have data about 53940 diamonds. Only 126 are larger than 2.5 carats. The distribution of the remainder is shown below</p>
+# Load your old workspace
+load(&quot;mywork.RData&quot;)</code></pre>
+<p>You may also want to “save out” modified datasets or graphics as you go through your work. <em>Never</em> save over your original dataset.</p>
+<p>In thinking about your file structure and organizing your work, consider creating a new folder for each new “project.” This can serve as your “working directory” in R. Your working directory is the place on your computer (or the cloud) that R will look to input data and output files or graphics. You should be sure to set a working directory at the beginning of each session by providing R with a filepath that it will use to locate your project folder. Note that how you set the working directory will differ depending on your <a href="http://www.statmethods.net/interface/workspace.html">operating system</a>.</p>
+<pre class="r"><code># Check current working directory
+getwd()
+
+# Mac/Unix
+setwd(&quot;/Users/me/Dropbox/myproject&quot;)
+
+# Windows
+setwd(&quot;C:/Me/Dropbox/myproject&quot;)</code></pre>
+</div>
+</div>
+<div id="getting-started" class="section level1">
+<h1>Getting Started</h1>
+<div id="loading-packages" class="section level2">
+<h2>Loading Packages</h2>
+<p>Now that you have R and a script file system up and running, you are ready to start your analysis. First you will want to load the packages that you need in order to do the operations you want.</p>
+<p>When you first load a package, you will need to install it from CRAN. This will require you to select a mirror as you did when you first downloaded R.</p>
+<pre class="r"><code>install.packages(&quot;MASS&quot;)
+install.packages(&quot;foreign&quot;)</code></pre>
+<p>Once you have initially installed the package, you will need to call it in each additional script file where you want to use it.</p>
+<pre class="r"><code>library(MASS)
+library(foreign)</code></pre>
+<p>Note that if you update your version of R, you will often have to re-install packages as well.</p>
+<p>R comes with several packages pre-loaded, but you can always check which packages are currently installed.</p>
+<pre class="r"><code>library()</code></pre>
+<p>Also note that sometimes packages depend on each other. If you load one package, it may also load “dependencies” that allow it to function. By the same token, several packages might have functions using the same name. This means that whichever package you load last will “mask” that function from other packages. R will notify you that it has masked a function so that you know which package’s function is currently in use. If you want to use two functions of the same name in different packages that you’ve loaded, you can do that by using <code>packagename::functionname</code>.</p>
+</div>
+<div id="getting-help" class="section level2">
+<h2>Getting Help</h2>
+<p>R can seem complex, but it also provides many built-in help functions, particularly when you are using new packages.</p>
+<p>To receive help with a specific package, you can:</p>
+<pre class="r"><code>help(packagename)
+# or
+?packagename</code></pre>
+<p>If you need more general help with a function or do not know which package to search for, you can instead enter:</p>
+<pre class="r"><code>??searchterm</code></pre>
+<p>Google and Stack Overflow are also excellent resources in this regard.</p>
+</div>
+<div id="creating-objects-in-r" class="section level2">
+<h2>Creating objects in R</h2>
+<p>Data can be entered directly into R or loaded from external sources. To get a sense of how R handles different data inputs, we will begin with entering data on our own.</p>
+<p>First note that, as above, R can be used as a very fancy calculator without creating any “objects” at all.</p>
+<pre class="r"><code>10-9</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>8^2</code></pre>
+<pre><code>## [1] 64</code></pre>
+<pre class="r"><code>sqrt(96)</code></pre>
+<pre><code>## [1] 9.797959</code></pre>
+<pre class="r"><code>log(2)</code></pre>
+<pre><code>## [1] 0.6931472</code></pre>
+<p>As our analyses increase in complexity, however, we may want to store values from particular operations into “objects,” which we can then call later for additional analysis.</p>
+<pre class="r"><code>A &lt;- 1+2
+B &lt;- log(100, base=10)
+C &lt;- 15
+D &lt;- (A + B)/C</code></pre>
+<p>Note that in order to store values to objects, we use the <code>&lt;-</code> syntax, which in English roughly means “A gets 1+2.”</p>
+<p>The type of data we enter can differ, however. As Hadley Wickham describes in greater detail in <a href="http://adv-r.had.co.nz/Data-structures.html">Advanced R</a>, we can think about the different data types that R handles in terms of their dimensionality. Single dimension data types will be (atomic) vectors or lists, whereas two-dimensional types will be matrices or dataframes. This generalizes to n dimensions with arrays. Within each of these dimensionalities, data may still be of different types. Data can be numeric, string, factor, etc. Knowing what type of data you are using and how it is organized is critical to using functions and conducting your analysis.</p>
+<p>We can input different types and dimensions of data directly into R.</p>
+<pre class="r"><code>scalar &lt;- 10
+vector &lt;- c(1,2,3)
+friends &lt;- c(&quot;Amy&quot;, &quot;Becky&quot;, &quot;Cassandra&quot;)
+
+vector.1 &lt;- seq(0,10, length=5)
+vector.1</code></pre>
+<pre><code>## [1]  0.0  2.5  5.0  7.5 10.0</code></pre>
+<pre class="r"><code>vector.2 &lt;- seq(0,10, by=1)
+vector.2</code></pre>
+<pre><code>##  [1]  0  1  2  3  4  5  6  7  8  9 10</code></pre>
+<pre class="r"><code>vector.3 &lt;- rep(&quot;me&quot;, 5)
+vector.3</code></pre>
+<pre><code>## [1] &quot;me&quot; &quot;me&quot; &quot;me&quot; &quot;me&quot; &quot;me&quot;</code></pre>
+<pre class="r"><code>vector</code></pre>
+<pre><code>## [1] 1 2 3</code></pre>
+<pre class="r"><code>friends</code></pre>
+<pre><code>## [1] &quot;Amy&quot;       &quot;Becky&quot;     &quot;Cassandra&quot;</code></pre>
+<pre class="r"><code># Be careful of case!
+Vector</code></pre>
+<pre><code>## Error in eval(expr, envir, enclos): object 'Vector' not found</code></pre>
+<pre class="r"><code>matrix.1 &lt;- matrix(vector, nrow=3, ncol=2, byrow=F)
+matrix.1</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    1    1
+## [2,]    2    2
+## [3,]    3    3</code></pre>
+<pre class="r"><code># Argument order matters: first is what fills the matrix, second is number of rows,  third is number of columns
+matrix.2&lt;-matrix(1,3,2)
+matrix.2</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    1    1
+## [2,]    1    1
+## [3,]    1    1</code></pre>
+<pre class="r"><code>matrix.3&lt;-diag(5)
+matrix.3</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    1    0    0    0    0
+## [2,]    0    1    0    0    0
+## [3,]    0    0    1    0    0
+## [4,]    0    0    0    1    0
+## [5,]    0    0    0    0    1</code></pre>
+<pre class="r"><code># Creating a matrix from vectors
+r.1 &lt;- c(1, 2, 3)
+r.2 &lt;- c(4, 5, 6)
+
+new.matrix &lt;- rbind(r.1, r.2)
+new.matrix</code></pre>
+<pre><code>##     [,1] [,2] [,3]
+## r.1    1    2    3
+## r.2    4    5    6</code></pre>
+<pre class="r"><code>c.1 &lt;- c(1, 2)
+c.2 &lt;- c(3, 4)
+
+newer.matrix &lt;- cbind(c.1, c.2)
+newer.matrix</code></pre>
+<pre><code>##      c.1 c.2
+## [1,]   1   3
+## [2,]   2   4</code></pre>
+<pre class="r"><code># This generalizes to arrays
+new.array &lt;- array(c(1,2,3), dim=c(3,1))
+new.array</code></pre>
+<pre><code>##      [,1]
+## [1,]    1
+## [2,]    2
+## [3,]    3</code></pre>
+<p>Having created all of these objects to store our data, we can also direct R to specific elements of larger objects.</p>
+<pre class="r"><code>friends[3]</code></pre>
+<pre><code>## [1] &quot;Cassandra&quot;</code></pre>
+<pre class="r"><code># Report all elements excluding element 2
+friends[-2]</code></pre>
+<pre><code>## [1] &quot;Amy&quot;       &quot;Cassandra&quot;</code></pre>
+<pre class="r"><code># Row 2 of matrix.2
+matrix.2[2,]</code></pre>
+<pre><code>## [1] 1 1</code></pre>
+<pre class="r"><code># Element in the second row, first column of new.matrix
+new.matrix[2,1]</code></pre>
+<pre><code>## r.2 
+##   4</code></pre>
+<pre class="r"><code># Determine the length of a vector
+length(vector.1)</code></pre>
+<pre><code>## [1] 5</code></pre>
+<pre class="r"><code># Determine dimensions of a matrix
+dim(matrix.2)</code></pre>
+<pre><code>## [1] 3 2</code></pre>
+<p>If you feel at any point that your workspace is too cluttered with objects, you can remove them selectively or in total:</p>
+<pre class="r"><code># Remove three matrices
+rm(matrix.1, matrix.2, matrix.3)
+matrix.1</code></pre>
+<pre><code>## Error in eval(expr, envir, enclos): object 'matrix.1' not found</code></pre>
+<pre class="r"><code># What still exists in our workspace?
+ls()</code></pre>
+<pre><code>##  [1] &quot;A&quot;            &quot;B&quot;            &quot;C&quot;            &quot;c.1&quot;         
+##  [5] &quot;c.2&quot;          &quot;D&quot;            &quot;friends&quot;      &quot;new.array&quot;   
+##  [9] &quot;new.matrix&quot;   &quot;newer.matrix&quot; &quot;r.1&quot;          &quot;r.2&quot;         
+## [13] &quot;scalar&quot;       &quot;vector&quot;       &quot;vector.1&quot;     &quot;vector.2&quot;    
+## [17] &quot;vector.3&quot;</code></pre>
+<pre class="r"><code># Remove everything in the workspace
+rm(list=ls())</code></pre>
 </div>
 </div>
 
