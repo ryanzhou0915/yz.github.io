@@ -593,6 +593,11 @@ plot(yhat, resid)</code></pre>
 <p>This <a href="https://stackoverflow.com/questions/5465314/tools-for-making-latex-tables-in-r">Stack Overflow post</a> summarizes the main packages for outputting results. Each package has its own syntax and options.</p>
 <p><a href="https://cran.r-project.org/web/packages/stargazer/vignettes/stargazer.pdf">Stargazer</a> is a newer package that includes a panoply of options. <a href="https://cran.r-project.org/web/packages/apsrtable/apsrtable.pdf">apsrtable</a> also provides options for formatting that are analogous to the presentation requirements in the #1 political science journal, the American Political Science Review.</p>
 </div>
+<div id="plotting-results" class="section level2">
+<h2>Plotting Results</h2>
+<p>You can plot results of your regression models, rather than displaying them as tables, using many of the techniques discussed above. Commonly, however, researchers in the social sciences will use a different kind of plot—a coefficient plot, or coefplot—to directly translate tabular model output into a visual display. Coefplots will include your coefficient estimate as a point, with (typically) your 95% confidence interval as lines on either side. This allows your audience to see whether, for example, confidence intervals overlap 0.</p>
+<p>There are several packages to do this in R, each with their own dependencies. The base function <code>coefplot()</code> exists in the <code>arm</code> package, while a <code>coefplot</code> package also exists (note <code>ggplot2</code> is a dependency!), and Ben Bolker has created <code>coefplot2</code> (which you still have to install from source rather than CRAN) that incorporates several more visual options. You can also create coefplots “by hand” using ggplot2. This <a href="https://stackoverflow.com/questions/32440899/coefplot-in-r-change-ci-line-colours">Stack Overflow post</a> discusses constructing a coefplot by hand, and <a href="https://r-forge.r-project.org/scm/viewvc.php/*checkout*/pkg/vignettes/coefplot2.pdf?root=coefplot2">this vignette</a> by Ben Bolker provides hands-on examples with both base graphics and ggplot2.</p>
+</div>
 </div>
 
 
