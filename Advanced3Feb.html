@@ -223,7 +223,6 @@ div.tocify {
 <div id="dplyr" class="section level1">
 <h1>dplyr</h1>
 <p><code>dplyr</code>, a package maintained by Hadley Wickham, provides useful alternative functions for data exploration analogous to what we explored in the last session. It also provides an alternative syntax for performing a series of operations that can increase efficiency. As always, you can invoke this with:</p>
-<pre class="r"><code>library(dplyr)</code></pre>
 <pre><code>## 
 ## Attaching package: 'dplyr'</code></pre>
 <pre><code>## The following objects are masked from 'package:stats':
@@ -402,7 +401,15 @@ iris %&gt;% .[[&quot;Sepal.Length&quot;]]</code></pre>
 <div id="regular-expressions" class="section level3">
 <h3>Regular expressions</h3>
 <p>Regular expressions are a series of characters that you can use to format a search. Some of the underlying concepts will be familiar if you have ever used special search terms on, for example, internet searches or library websites, where &quot; &quot; give you items with an exact match, and * serves as a wildcard (so that you can, for example, search for doc* and receive results with both doc, document, documents, documentary, etc.), etc. Regular expressions invoke this type of logic to allow you to more precisely search for terms or character fragments that you need.</p>
-<p>The set of regular expressions is fairly long and complex, but some key characters you should know include: * ( ) groups characters * [ ] used for “or” conditions * . can match anything *  is an escape character, so that you can reference punctuation-type characters directly even when they would otherwise be operators * ^ searches from the beginning * $ searches from the end</p>
+<p>The set of regular expressions is fairly long and complex, but some key characters you should know include:</p>
+<ul>
+<li><p>( ) groups characters</p></li>
+<li><p>[ ] used for “or” conditions</p></li>
+<li><p>. can match anything</p></li>
+<li><p>\ is an escape character, so that you can reference punctuation-type characters directly even when they would otherwise be operators</p></li>
+<li><p>^ searches from the beginning</p></li>
+<li><p>$ searches from the end</p></li>
+</ul>
 <p>The <code>strings</code> overview in <a href="http://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions">R for Data Science</a> provides a very comprehensive explanation of all of these and more.</p>
 <p>You can access regular expressions outside of the <code>stringr</code> package simply using base R’s <code>grep</code>, <code>grepl</code>, or <code>regexp</code>. Use <a href="http://www.regular-expressions.info/rlanguage.html">this guide</a> to see more examples of how the arguments for these functions will allow you to incorporate regular expressions into your work. Note that these are great for textual analysis, but are also great for systematically renaming variables, variable values, or even files. For example, suppose you read in a series of .csv files at once that you need to merge into a single dataset. Each file represents data from a different country and is named something like <code>datasource-countryname-year.csv</code>. You can use regular expressions to split this string by <code>-</code>, select the second element to extract the name of the country from the filename, and use it to populate a column named <code>country</code> in the final, merged dataset.</p>
 <p>This <a href="https://www.cheatography.com/davechild/cheat-sheets/regular-expressions/">cheatsheet</a> provides a comprehensive list of different parts of regular expressions you can use, and <a href="https://regex101.com/">this website</a> will actually allow you to test your regular expressions as you create them, to see highlighted parts of text that the expression will correctly identify.</p>
@@ -443,18 +450,32 @@ iris %&gt;% .[[&quot;Sepal.Length&quot;]]</code></pre>
 <p>If you google “survey weights in R” or “survey analysis R” you will see that a package called <code>survey</code> has documentation in the first few hits. You will also notice a few posts on R-bloggers and similar sites that provide explainers related to the package, situated in broader context about survey analysis.</p>
 <p>Having done this initial search, you have several components of the information you need. First, you discover that the <code>survey</code> package can help you in creating a design object that you use in later analysis using <code>svydesign()</code>. With this function, you can directly specify the name of the weights variable if it already exists in the data. You will also specify the stratification of your sample (or samples).</p>
 <p>Once you have created a design object, you will use the built-in functions in <code>survey</code> to do your basic analysis. These functions will take you far if you are manipulating data collected by other researchers. But what if the survey data are your own?</p>
-<p>Here you may need to calculate weights yourself. To do this, you will need to use the <code>rake()</code> function in <code>survey</code>.</p>
+<p>Here you may need to calculate weights yourself. To do this, you will need to use the <code>rake()</code> function in <code>survey</code>, which requires both sample and population margins.</p>
+<p>Suppose you had voting data for individuals and want to compute weights by party (R, D, I) and income bracket (High, Medium, Low). Take note of the information that blog posts and the package documentation take into account. You can do this primarily by investigating the <em>arguments</em> of functions and the <em>type</em> of information they take.</p>
+<p>In this case, both of these variables of interest are factor variables with 3 levels each and you will need relative frequencies for each level. Following the example in <a href="https://www.r-bloggers.com/survey-computing-your-own-post-stratification-weights-in-r/">this R-bloggers post</a>, you would create dataframes relevant to population characteristics accordingly:</p>
+<pre class="r"><code>distr.party &lt;- data.frame(party = c(&quot;R&quot;, &quot;D&quot;, &quot;I&quot;),
+                       Freq = nrow(mydata) * c(.45, .5, .05))
+
+distr.income &lt;- data.frame(income=c(&quot;High&quot;, &quot;Medium&quot;, &quot;Low&quot;),
+                           Freq=nrow(mydata)*c(.01, .6, .39))</code></pre>
+<p>Now you will use <code>rake()</code> to relate these values to your sample.</p>
+<pre class="r"><code>raked.leaves &lt;- rake(design = mydata.nowt,
+                   sample.margins = list(~party, ~income),
+                   population.margins = list(party.dist, income.dist))</code></pre>
+<p>Unlike the implementation of packages in other programs (cough STATA), you may need to examine and adjust these weights to be within reasonable bounds. This again requires <em>knowing your data</em>.</p>
 <ul>
 <li>Step 2: More specific searches</li>
 </ul>
 <p>Now that you have some basic information about the relevant package and how it functions, you may have more specific questions that pertain to your data. Perhaps you need more information about cluster bootstrapping for resampling. These are questions you can take to Google again, but you might also benefit from taking them directly to specialty sites like Stack Overflow. In doing this, you might find Thomas Lumley’s (the <code>survey</code> package author) page, and will likely find his <a href="https://faculty.washington.edu/tlumley/survey-jsm-nup.pdf">slides</a> covering more complex applications of the package than are covered in the R-bloggers posts. You will also discover there is a book, “Complex Surveys: A Guide to Analysis Using R” that Lumley wrote that you could reference. [ <em>Note:</em> Because R is open-source, be wary of paying large sums of money for books on its functions or packages—many resources exist for free!]</p>
 <ul>
-<li>Step 3: Iterate Now that you have completed basic analysis and found a few preliminary answers to your initial tasks and questions, iterate the search process. Try sample code from one site, use examples from a vignette related to a package, and google any errors you receive and read about other users who have had those issues on Stack Overflow. At this point, if not sooner, you may go beyond the lonely internet life to reach out to friends, colleagues, and professors who may have done similar work.</li>
+<li>Step 3: Iterate</li>
 </ul>
+<p>Now that you have completed basic analysis and found a few preliminary answers to your initial tasks and questions, iterate the search process. Try sample code from one site, use examples from a vignette related to a package, and google any errors you receive and read about other users who have had those issues on Stack Overflow. At this point, if not sooner, you may go beyond the lonely internet life to reach out to friends, colleagues, and professors who may have done similar work.</p>
 <p>If no one is available locally to help, and answers on the internet are sparse, but you see a technique referenced in a paper, you may also be able to directly find code for your problem on an author’s personal webpage or Github repository.</p>
 <ul>
-<li>Step 4: DIY Step 4 won’t be for everyone, but in a pinch you can often write your own functions to solve problems that are not well-managed by existing packages. Some examples might include things like cluster robust standard error calculations for complex, rare model types; uncommon types of cross-validation; particular estimators or samplers. For many of these, the internet will still be your best friend as you are (often) converting math to code. Many times, investing in something of your own design is not necessary because current packages have adequate functionality, but if you find yourself doing the same type of analysis routinely and needing something beyond the prefab, coding your own solution can often be efficient in the long-run. This is how packages are introduced in the first place.</li>
+<li>Step 4: DIY</li>
 </ul>
+<p>Step 4 won’t be for everyone, but in a pinch you can often write your own functions to solve problems that are not well-managed by existing packages. Some examples might include things like cluster robust standard error calculations for complex, rare model types; uncommon types of cross-validation; particular estimators or samplers. For many of these, the internet will still be your best friend as you are (often) converting math to code. Many times, investing in something of your own design is not necessary because current packages have adequate functionality, but if you find yourself doing the same type of analysis routinely and needing something beyond the prefab, coding your own solution can often be efficient in the long-run. This is how packages are introduced in the first place.</p>
 </div>
 <div id="bayesian-estimation" class="section level3">
 <h3>Bayesian estimation</h3>
