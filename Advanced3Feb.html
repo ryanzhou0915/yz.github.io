@@ -222,15 +222,7 @@ div.tocify {
 <p>During this session, we will primarily explore some more advanced topics within R, including alternative syntaxes and languages you can use from within R for various purposes, alternative ways of organizing and analyzing your information, and applications to more advanced analyses like text analysis, Bayesian analysis, or survey techniques.</p>
 <div id="dplyr" class="section level1">
 <h1>dplyr</h1>
-<p><code>dplyr</code>, a package maintained by Hadley Wickham, provides useful alternative functions for data exploration analogous to what we explored in the last session. It also provides an alternative syntax for performing a series of operations that can increase efficiency. As always, you can invoke this with:</p>
-<pre><code>## 
-## Attaching package: 'dplyr'</code></pre>
-<pre><code>## The following objects are masked from 'package:stats':
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union</code></pre>
+<p><code>dplyr</code>, a package maintained by Hadley Wickham, provides useful alternative functions for data exploration analogous to what we explored in the last session. It also provides an alternative syntax for performing a series of operations that can increase efficiency.</p>
 <p><code>dplyr</code> improves upon the previous <code>plyr</code> package.</p>
 <div id="analysis-and-manipulation" class="section level2">
 <h2>Analysis and Manipulation</h2>
@@ -429,18 +421,32 @@ iris %&gt;% .[[&quot;Sepal.Length&quot;]]</code></pre>
 </div>
 <div id="more-different-syntaxes-r-as-a-front-end" class="section level2">
 <h2>More, different syntaxes: R as a front-end</h2>
+<p>Besides the divide in syntax between base R and the <code>tidyverse</code>, R can also be used in more advanced applications as a front-end to other software and languages.</p>
 <div id="rpython" class="section level3">
-<h3>Rpython</h3>
+<h3>rPython</h3>
+<p>The <a href="https://cran.r-project.org/web/packages/rPython/index.html">rPython package</a> allows you to run Python code directly through R. As is common with many adaptations of other languages or programs to R, the functions in this program will have syntax from R that runs code from another language or program. This is useful if you need a particular functionality of one program or language, but are most comfortable or familiar with R’s interface and syntax.</p>
 </div>
 <div id="rselenium" class="section level3">
 <h3>RSelenium</h3>
+<p><a href="https://cran.r-project.org/web/packages/RSelenium/vignettes/RSelenium-basics.html">RSelenium</a> is a great example of this. If you are not familiar with Python syntax for scraping webpages, for example, or have a more complex scraping project that requires you to manipulate a website at the same time, you can invoke Selenium (a java-based program) through R to do the necessary tasks. Note that to do this, you may want to run a Docker container. Instructions on how to do that are in the linked vignette above.</p>
 </div>
-<div id="bayesian-analysis" class="section level3">
-<h3>Bayesian analysis</h3>
+<div id="rcpp" class="section level3">
+<h3>Rcpp</h3>
+<p>The <a href="https://cran.r-project.org/web/packages/Rcpp/index.html">Rcpp package</a> allows you to leverage both R and C++ syntaxes and libraries. This can be particularly useful as you optimize computationally intensive model estimation, or for creating your own packages. Read through the explanation in <a href="http://adv-r.had.co.nz/Rcpp.html">Advanced R</a> for more.</p>
+</div>
+<div id="bugs-jags-and-stan" class="section level3">
+<h3>BUGS, JAGS, and Stan</h3>
+<p>Several different tools exist for Bayesian analysis in R, many requiring external programs. <a href="http://www.mrc-bsu.cam.ac.uk/software/bugs/the-bugs-project-winbugs/">BUGS/WinBUGS/OpenBugs</a> are a set of classic programs for several platforms with its own set of GUIs. If you visit the BUGS site, you’ll notice this warning:</p>
+<p>“The programs are reasonably easy to use and come with a wide range of examples. There is, however, a need for caution. A knowledge of Bayesian statistics is assumed, including recognition of the potential importance of prior distributions, and MCMC is inherently less robust than analytic statistical methods. There is no in-built protection against misuse.”</p>
+<p>While knowing your data and knowing your method are key in all types of statistical computing practice, it bears mentioning here that relying on packages or programs that automate elements of your analysis also requires you to recognize their functions, limitations, and underlying assumptions.</p>
+<p><em>Note about NIMBLE</em>: <a href="https://r-nimble.org/">NIMBLE</a> is another option for Bayesian analysis that builds on BUGS and allows you to write your own algorithms if you choose. Handle with care.</p>
+<p><a href="http://mcmc-jags.sourceforge.net/">JAGS</a> works much the same as BUGS and follows similar coding conventions.</p>
+<p>The biggest departure (although not too big) comes with <a href="http://mc-stan.org/">Stan</a>, a project headed by Andrew Gelman. Although you can access it through R with <code>rstan</code>, it features syntax much closer to C++. It can be more efficient for particularly complex hierarchical models and includes the <a href="http://www.stat.columbia.edu/~gelman/research/published/nuts.pdf">No-U-Turn Sampler (NUTS)</a>, an optimization of Hamiltonian Monte Carlo.</p>
 </div>
 </div>
 <div id="learning-new-packages" class="section level2">
 <h2>Learning new packages</h2>
+<p>As you begin to explore R more on your own, you will need to adapt to different coding styles and packages in order to do different types of analyses. Learning how to learn is also a key part of the educational process (and certainly a staple of graduate school). Below are some quick guides on how to teach yourself new techniques in R, with examples from survey and Baysian analyses.</p>
 <div id="surveys" class="section level3">
 <h3>Surveys</h3>
 <p>Suppose that as a new user of R (useR), you are confronted with a survey analysis project. Taking the tools you have already learned in this class, you feel comfortable reading in survey data and doing basic summary analysis and visualization. When it comes to more complex analyses, however, you need guidance on survey weights and how to handle them, because your results will depend on the weights you choose and the type of sample you have.</p>
@@ -507,7 +513,14 @@ summary(model0)</code></pre>
 </div>
 <div id="bayesian-estimation" class="section level3">
 <h3>Bayesian estimation</h3>
-<p>The survey example seems relatively straightforward: identify the relevant package for your needs and use internet resources to help you implement its functions.</p>
+<p>The survey example seems relatively straightforward: identify the relevant package for your needs and use internet resources to help you implement its functions. But what if there are multiple such packages: how do you choose?</p>
+<p>In addition to complementary programs like <code>JAGS</code> and <code>stan</code> that can be used with an R interface, there are several packages designed to do Bayesian estimation without needing to fully mathematically specify a model. If you are familiar with Bayes, you can imagine why this creates more need than ever to truly understand what kinds of assumptions a package operates under and what functions go on under the hood.</p>
+<p>Here again you may begin by simply googling <code>&quot;Bayesian packages R&quot;</code> or a specific task in Bayesian analysis you want to complete. If you are already aware multiple packages exist, however, (or become aware and overwhelmed quickly by googling), another option is to check out the <a href="https://cran.r-project.org/web/views/">Cran Task View</a>. The Task View does not list many categories, but for each included category it provides an overview of common packages and their relative advantages. In the <a href="https://cran.r-project.org/web/views/Bayesian.html">Task View for Bayes</a>, you will see a host of packages specifically designed for Bayesian analysis, as well as a series of packages that include functions for particular modeling challenges. If you have a specific task in mind, you can easily search this page for mentions; otherwise, everything is in alphabetical order. Often if you are looking to do Bayesian analysis in a canned routine through one of these packages, your problem is already well-defined by the type of model you are trying to estimate or the type of data you have at your dispoal—these will also help you to narrow the set of possible candidates.</p>
+<p>While you should always prioritize the package that has functions most suited to your needs, having a mental catalog of general functions that cover your area of interest will help you to identify possible places to start in the future as new analysis tasks arrive. This section will highlight just a few useful packages to keep in mind.</p>
+<ul>
+<li><p>The <code>arm</code> package is a great general package useful for both MLE and Bayes, with code that accompanies Gelman and Hill (2007). Specifically relevant to Bayes, <code>arm</code> includes the <code>bayesglm()</code> function. When investigating this function, take note of its default behaviors. For example, prior means default to 0 if not set manually. If you specify only one, but have several predictors (independent variables excluding intercept), it is assumed that that single prior mean is the same for all predictors. Otherwise, you need a vector of prior means of length equal to the number of predictors.</p></li>
+<li><p><a href="https://cran.r-project.org/web/packages/MCMCpack/MCMCpack.pdf">MCMCpack</a> contains a number of model types and postestimation analysis functions for Bayes. Andrew Martin and Kevin Quinn provide a set of <a href="http://mcmcpack.berkeley.edu/files/MartinQuinnMCMCpackslides.pdf">slides</a> explaining its functions and relative advantage versus using something like BUGS. MCMCpack uses <code>coda</code> as a basis for posterior analysis, so you will need to use extra documentation to understand its full range of functionality. It does include built-in functions for calculating Bayes Factors and posterior model probability. Also note that while functions like <code>MCMCregress</code> do not require you to specify priors in quite the same way as JAGS, say, and that might be more comfortable, it does require you to think about how you want to calculate the marginal likelihood (using the argument <code>marginal.likelihood=</code>) if you want to deviate from the default.</p></li>
+</ul>
 </div>
 <div id="a-note-about-venue-shopping" class="section level3">
 <h3>A Note about Venue-Shopping</h3>
