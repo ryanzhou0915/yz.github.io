@@ -729,6 +729,21 @@ update(expanded.model, 10000)
 expanded.model.j &lt;- coda.samples(expanded.model, c(&quot;b0&quot;,&quot;b&quot;,&quot;p&quot;), n.iter=100000, thin=10)
 summary(expanded.model.j)</code></pre>
 <p>In this case, you have expanded a grid similar to what you did with <code>model.matrix</code>, so that the set of coefficients you have tracks the number of explanatory variables you include. Note that if you do this, you will want to loop over your <code>b</code>’s to provide priors for each, assuming each gets the same prior. Also note that in creating the second loop we have said “loop over each j element for values 1:k,” meaning that you will now need to specify k (the number of explanatory variables in your model) when you provide your data list.</p>
+<p>Finally, note that you could also skip the messy business about <code>y.hat</code> and use the <code>logit()</code> function:</p>
+<pre class="r"><code>model{
+for (i in 1:n){
+        y[i] ~ dbern(p[i])
+        logit(p[i]) &lt;- b0 + inprod(b[]*x[i,])
+}
+b0 ~ dnorm(0,1.0e-2)
+for(j in 1:k){
+    b[j] ~ dnorm(0,1.0e-4)
+}</code></pre>
+<p>For more example code and some video lectures and slides, check out these resources:</p>
+<ul>
+<li><p><a href="http://jee3.web.rice.edu/teaching.htm">Justin Esarey’s teaching materials</a></p></li>
+<li><p><a href="https://github.com/johnmyleswhite/JAGSExamples">This Github repo</a> with rjags scripts, simulated data, and .bug files for various models</p></li>
+</ul>
 <p>Besides using BUGS and JAGS, another option available to you is <a href="http://mc-stan.org/">Stan</a>, a project headed by Andrew Gelman. Although you can access it through R with <code>rstan</code>, it features syntax much closer to C++. It can be more efficient for particularly complex hierarchical models and includes the <a href="http://www.stat.columbia.edu/~gelman/research/published/nuts.pdf">No-U-Turn Sampler (NUTS)</a>, an optimization of Hamiltonian Monte Carlo. Stan also has a great set of <a href="http://mc-stan.org/documentation/">documentation</a>, including a language manual, examples, and tutorials to help you get started and to compare syntax with BUGS. Stan also has a user community Google group to which you can post issues and questions.</p>
 </div>
 </div>
