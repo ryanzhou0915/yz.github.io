@@ -658,8 +658,78 @@ ap_sentiments</code></pre>
 <p>“The programs are reasonably easy to use and come with a wide range of examples. There is, however, a need for caution. A knowledge of Bayesian statistics is assumed, including recognition of the potential importance of prior distributions, and MCMC is inherently less robust than analytic statistical methods. There is no in-built protection against misuse.”</p>
 <p>While knowing your data and knowing your method are key in all types of statistical computing practice, it bears mentioning here that relying on packages or programs that automate elements of your analysis also requires you to recognize their functions, limitations, and underlying assumptions.</p>
 <p><em>Note about NIMBLE</em>: <a href="https://r-nimble.org/">NIMBLE</a> is another option for Bayesian analysis that builds on BUGS and allows you to write your own algorithms if you choose. Handle with care.</p>
-<p><a href="http://mcmc-jags.sourceforge.net/">JAGS</a> works much the same as BUGS and follows similar coding conventions.</p>
-<p>The biggest departure (although not too big) comes with <a href="http://mc-stan.org/">Stan</a>, a project headed by Andrew Gelman. Although you can access it through R with <code>rstan</code>, it features syntax much closer to C++. It can be more efficient for particularly complex hierarchical models and includes the <a href="http://www.stat.columbia.edu/~gelman/research/published/nuts.pdf">No-U-Turn Sampler (NUTS)</a>, an optimization of Hamiltonian Monte Carlo. Stan also has a great set of <a href="http://mc-stan.org/documentation/">documentation</a>, including a language manual, examples, and tutorials to help you get started and to compare syntax with JAGS. Stan also has a user community Google group to which you can post issues and questions.</p>
+<p><a href="http://mcmc-jags.sourceforge.net/">JAGS</a> works much the same as BUGS and follows similar coding conventions, and at this stage is likely most commonly used. If you are just getting started with JAGS, you will notice that it requires data in a list format, a full model specification, and instructions about the sampling process (burn-in, number of iterations, etc.).</p>
+<p>A basic model will take the general form</p>
+<pre class="r"><code>model {
+  # where n is number of observations in data
+  for(i in 1:n){
+    # each value of the dependent variable will be determined by some density function (e.g., dbern if it is bernoulli) with a given parameter (e.g., for shape or scale of that distribution)
+    y[i] ~ densityfn(param)
+  }
+  # parameter value of the distribution for y has a prior density of its own, with a parameter or set of parameters as well (e.g., dunif(0,1))
+  param ~ paramdensity(param2)
+}</code></pre>
+<p>You can specify this model within R itself, or save it out as a <code>.bugs</code> file that you later call with JAGS:</p>
+<pre class="r"><code>modelString= &quot;model{
+    y[i] ~ densityfn(param)
+  }
+  param ~ paramdensity(param2)
+}&quot;
+writeLines(modelString, con=&quot;mymodel.bug&quot;)</code></pre>
+<p>You can then call this model directly from a <code>.bug</code> file (or if you saved it as a <code>.jag</code> file) in your working directory when running JAGS. Here I’m using the <code>run.jags</code> function from the <code>runjags</code> package. The arguments are effectively the same if you use <code>rjags</code>, as I do below.</p>
+<pre class="r"><code>post &lt;- run.jags(&quot;mymodel.bug&quot;
+                 # what values am I interested in for results
+                 monitor=&quot;param&quot;,
+                 # data must be in the form of a list object: if you have binary or factor explanatory variables, you will want to use model.matrix and specify which variables are &quot;contr.treatment&quot;
+                 data=list(y=y, n=length(y)), 
+                 # how large of a sample do you want? the bigger it is, the longer it will take, but complex models may take longer to converge
+                 sample=10000,
+                 # throw away the first several samples with poor mixing
+                 burnin=1000,
+                 # take only a subset of total samples: saves on memory and smooths results
+                 thin=10,
+                 # you can technically run more than one &quot;chain&quot; of this analysis or spread the sampling over cores (parallelization), but you don't need to
+                 n.chains=1)</code></pre>
+<p>In terms of preparing your data, as stated above, if you have factor variables for example, you will need to use <code>model.matrix</code> to expand your grid (that is, to create rows and columns for values of each variable for each level of your factors). Factor variables are “contrasts.” For example, if you had a model predicting voting in terms of age, sex, and party, your data preparation might look like this:</p>
+<pre class="r"><code>y &lt;- vote.variable
+x.expand &lt;- model.matrix(~ age + sex + party, data=dataname, contrasts=list(sex=&quot;contr.treatment&quot;, party=&quot;contr.treatment&quot;))
+
+# for modeling, you may need to remove the intercept
+x.expand &lt;- x.expand[-1]</code></pre>
+<p>Note that age is not a contrast because it is presumed to be continuous.</p>
+<p>Using this setup for your data, you want to estimate a logit (voted y/n), so your JAGS model might look like:</p>
+<pre class="r"><code>model{
+for (i in 1:n){
+        y[i] ~ dbern(p[i])
+        y.hat[i] &lt;- b0 + b1*x1[i] + b2*x2[i] + b3*x3[i]
+        p[i] &lt;- 1/(1+ exp(−y.hat[i]))
+}
+b0 ~ dnorm(0,1.0e-4)
+b1 ~ dnorm(0,1.0e-4)
+b2 ~ dnorm(0,1.0e-4)
+b3 ~ dnorm(0,1.0e-4)
+}</code></pre>
+<p>In this setup you have one <code>b</code> for each of your covariates, you are looping over each observation in you independent variables, and you have the <code>p[i]</code> allowing you to estimate the logit. Choices of priors are up to you–these ones are all the same, but note that you would specify one for each coefficient.</p>
+<p>Alternatively, you could collapse some of this with <code>inprod</code>. Here you will note I have changed to using <code>jags.model</code> and related functions from the <code>rjags</code> package. Either syntax or setup will work.</p>
+<pre class="r"><code>model{
+for (i in 1:n){
+        y[i] ~ dbern(p[i])
+        y.hat[i] &lt;- b0 + inprod(b[]*x[i,])
+        p[i] &lt;- 1/(1+ exp(−y.hat[i]))
+}
+b0 ~ dnorm(0,1.0e-2)
+for(j in 1:k){
+    b[j] ~ dnorm(0,1.0e-4)
+}
+}
+
+
+expanded.model&lt;-jags.model(&quot;mymodel.bug&quot;, data=list(y=y, x=x.expand, k=3, n=length(y)))
+update(expanded.model, 10000)
+expanded.model.j &lt;- coda.samples(expanded.model, c(&quot;b0&quot;,&quot;b&quot;,&quot;p&quot;), n.iter=100000, thin=10)
+summary(expanded.model.j)</code></pre>
+<p>In this case, you have expanded a grid similar to what you did with <code>model.matrix</code>, so that the set of coefficients you have tracks the number of explanatory variables you include. Note that if you do this, you will want to loop over your <code>b</code>’s to provide priors for each, assuming each gets the same prior. Also note that in creating the second loop we have said “loop over each j element for values 1:k,” meaning that you will now need to specify k (the number of explanatory variables in your model) when you provide your data list.</p>
+<p>Besides using BUGS and JAGS, another option available to you is <a href="http://mc-stan.org/">Stan</a>, a project headed by Andrew Gelman. Although you can access it through R with <code>rstan</code>, it features syntax much closer to C++. It can be more efficient for particularly complex hierarchical models and includes the <a href="http://www.stat.columbia.edu/~gelman/research/published/nuts.pdf">No-U-Turn Sampler (NUTS)</a>, an optimization of Hamiltonian Monte Carlo. Stan also has a great set of <a href="http://mc-stan.org/documentation/">documentation</a>, including a language manual, examples, and tutorials to help you get started and to compare syntax with BUGS. Stan also has a user community Google group to which you can post issues and questions.</p>
 </div>
 </div>
 <div id="learning-new-packages" class="section level2">
