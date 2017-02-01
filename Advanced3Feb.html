@@ -463,6 +463,34 @@ distr.income &lt;- data.frame(income=c(&quot;High&quot;, &quot;Medium&quot;, &qu
                    sample.margins = list(~party, ~income),
                    population.margins = list(party.dist, income.dist))</code></pre>
 <p>Unlike the implementation of packages in other programs (cough STATA), you may need to examine and adjust these weights to be within reasonable bounds. This again requires <em>knowing your data</em>.</p>
+<p>Note that <code>survey</code> has its own syntax for estimating models using survey design objects, for example <code>svyglm</code> instead of regular <code>glm</code>. Look at an example from the package documentation:</p>
+<pre class="r"><code>data(api)
+dclus2&lt;-svydesign(id=~dnum+snum, weights=~pw, data=apiclus2)
+
+model0&lt;-svyglm(I(sch.wide==&quot;Yes&quot;)~ell+meals+mobility, design=dclus2, family=quasibinomial())
+summary(model0)</code></pre>
+<pre><code>## 
+## Call:
+## svyglm(formula = I(sch.wide == &quot;Yes&quot;) ~ ell + meals + mobility, 
+##     design = dclus2, family = quasibinomial())
+## 
+## Survey design:
+## svydesign(id = ~dnum + snum, weights = ~pw, data = apiclus2)
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)  
+## (Intercept)  0.82118    0.76726   1.070   0.2916  
+## ell         -0.05462    0.02220  -2.461   0.0188 *
+## meals        0.02873    0.01820   1.579   0.1232  
+## mobility     0.01460    0.03017   0.484   0.6313  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for quasibinomial family taken to be 0.9856512)
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>You will notice that the syntax looks very similar to what you are familiar with from our discussion of <code>glm</code>: you specify a dependent variable <code>~</code> independent variables, the design object where previously you specified data, and the family of model you would like to estimate (in this case a quasibinomial).</p>
+<p>You may not be familiar with the <code>I()</code> notation used to specify the dependent variable. Do not panic. Recall our previous discussion that you can modify variables in place within model commands in R, just as we did with <code>log(y)</code>. If you search for <code>I() function in R</code> you will easily find <a href="https://stat.ethz.ch/R-manual/R-devel/RHOME/library/base/html/AsIs.html">documentation</a> to inform you that <code>I()</code> is an inhibiting function that simply “protects” dataframes so that strings are not converted to factors, for example.</p>
 <ul>
 <li>Step 2: More specific searches</li>
 </ul>
@@ -471,7 +499,7 @@ distr.income &lt;- data.frame(income=c(&quot;High&quot;, &quot;Medium&quot;, &qu
 <li>Step 3: Iterate</li>
 </ul>
 <p>Now that you have completed basic analysis and found a few preliminary answers to your initial tasks and questions, iterate the search process. Try sample code from one site, use examples from a vignette related to a package, and google any errors you receive and read about other users who have had those issues on Stack Overflow. At this point, if not sooner, you may go beyond the lonely internet life to reach out to friends, colleagues, and professors who may have done similar work.</p>
-<p>If no one is available locally to help, and answers on the internet are sparse, but you see a technique referenced in a paper, you may also be able to directly find code for your problem on an author’s personal webpage or Github repository.</p>
+<p>If no one is available locally to help, and answers on the internet are sparse, but you see a technique referenced in a paper, you may also be able to directly find code for your problem on an author’s personal webpage or Github repository. You can also perform a general search of Github repos to look for code directly (try searching <code>cluster robust standard errors</code>).</p>
 <ul>
 <li>Step 4: DIY</li>
 </ul>
@@ -479,6 +507,7 @@ distr.income &lt;- data.frame(income=c(&quot;High&quot;, &quot;Medium&quot;, &qu
 </div>
 <div id="bayesian-estimation" class="section level3">
 <h3>Bayesian estimation</h3>
+<p>The survey example seems relatively straightforward: identify the relevant package for your needs and use internet resources to help you implement its functions.</p>
 </div>
 <div id="a-note-about-venue-shopping" class="section level3">
 <h3>A Note about Venue-Shopping</h3>
