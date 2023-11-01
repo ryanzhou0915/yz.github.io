@@ -1,4 +1,4 @@
 yz.github.io
 =================
 
-Data, code, and teaching materials
+Data, code, and other materials
